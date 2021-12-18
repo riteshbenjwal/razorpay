@@ -1,40 +1,38 @@
 const express = require("express");
-
+const Razorpay = require("razorpay");
 const app = express();
-
+app.use(express.static("./public"));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
+// app.get("/", (req, res) => {
+//   res.send("hi");
+// });
 
 app.post("/order", async (req, res) => {
   const amount = req.body.amount;
 
   var instance = new Razorpay({
-    key_id: "YOUR_KEY_ID",
-    key_secret: "YOUR_SECRET",
+    key_id: "rzp_test_B2aqWFvXGvFDVy",
+    key_secret: "x9jWNnB8vpu87yNHRNwfyySq"
+    // this needs to go in .env
   });
 
   var options = {
-    amount: amount *100,
+    amount: amount * 100, // amount in the smallest currency unit
     currency: "INR",
-    receipt: "order_rcptid_11",
+    receipt: "order_rcptid_11"
   };
+  //   instance.orders.create(options, function (err, order) {
+  //     console.log(order);
+  //   });
 
   const myOrder = await instance.orders.create(options);
 
-  res.status(201).json({
-      success: true,
-      amount: amount,
-      order: myOrder,
+  res.status(200).json({
+    success: true,
+    amount,
+    order: myOrder
   });
-
-//   instance.orders.create(options, function(err,order){
-//       console.log(order);
-//   });
 });
 
-app.listen(4000, () => {
-  console.log("server is running on port 4000");
-});
+app.listen(4000, () => console.log(`Server is running at port 4000`));
